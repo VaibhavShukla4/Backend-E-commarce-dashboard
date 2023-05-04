@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 require("./db/config");
 const User = require("./db/User");
+const Products = require("./db/Products");
 const app = express();
 // app.use is middleware
 app.use(express.json());
@@ -30,6 +31,21 @@ app.post("/login", async (req, res) => {
     }
   } else {
     res.send("both field are mandatory");
+  }
+});
+
+app.post("/add-products", async (req, res) => {
+  let product = new Products(req.body);
+  let result = await product.save();
+  res.send(result);
+  console.log(result);
+});
+app.get("/list-products", async (req, res) => {
+  let product = await Products.find();
+  if (product.length > 0) {
+    res.send(product);
+  } else {
+    res.send({ result: "no product found !" });
   }
 });
 app.listen(5000);
