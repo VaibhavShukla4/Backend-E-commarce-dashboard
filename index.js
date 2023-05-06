@@ -48,4 +48,26 @@ app.get("/list-products", async (req, res) => {
     res.send({ result: "no product found !" });
   }
 });
+app.get("/list-products", async (req, res) => {
+  let product = await Products.find();
+  if (product.length > 0) {
+    res.send(product);
+  } else {
+    res.send({ result: "no product found !" });
+  }
+});
+app.delete("/product/:id", async (req, res) => {
+  let result = await Products.deleteOne({ _id: req.params.id });
+  res.send(result);
+  console.log(result);
+});
+app.get("/product/:id", async (req, res) => {
+  let result = await Products.findOne({ _id: req.params.id });
+  if (result) {
+    res.send(result);
+  } else {
+    res.send({ result: "No record Found" });
+  }
+  // console.log(result);
+});
 app.listen(5000);
