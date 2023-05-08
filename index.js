@@ -113,7 +113,7 @@ app.get("/search/:key", verifyToken, async (req, res) => {
     res.send({ result: "No record Found" });
   }
 });
-
+// for verify token
 function verifyToken(req, res, next) {
   let token = req.headers.authorization;
   if (token) {
