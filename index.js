@@ -122,7 +122,6 @@ function verifyToken(req, res, next) {
       if (err) {
         res.status(401).send({ result: "Please provide valid token  " });
       } else {
-        // res.send(valid);
         next();
       }
     });
@@ -130,7 +129,5 @@ function verifyToken(req, res, next) {
   } else {
     res.status(403).send({ result: "Please add token with headers" });
   }
-  // console.log("middleware call", token);
-  // next();
 }
 app.listen(5000);
