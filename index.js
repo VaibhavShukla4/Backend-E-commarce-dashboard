@@ -52,14 +52,14 @@ app.post("/login", async (req, res) => {
   }
 });
 //for add products
-app.post("/add-products", async (req, res) => {
+app.post("/add-products", verifyToken, async (req, res) => {
   let product = new Products(req.body);
   let result = await product.save();
   res.send(result);
   console.log(result);
 });
 //for fetching list
-app.get("/list-products", async (req, res) => {
+app.get("/list-products", verifyToken, async (req, res) => {
   let product = await Products.find();
   if (product.length > 0) {
     res.send(product);
@@ -68,13 +68,13 @@ app.get("/list-products", async (req, res) => {
   }
 });
 // for delete  a specific product
-app.delete("/product/:id", async (req, res) => {
+app.delete("/product/:id", verifyToken, async (req, res) => {
   let result = await Products.deleteOne({ _id: req.params.id });
   res.send(result);
   console.log(result);
 });
 //  for fetch one product  with the help of params
-app.get("/product/:id", async (req, res) => {
+app.get("/product/:id", verifyToken, async (req, res) => {
   let result = await Products.findOne({ _id: req.params.id });
   if (result) {
     res.send(result);
@@ -85,7 +85,7 @@ app.get("/product/:id", async (req, res) => {
 });
 
 // for update the product data
-app.put("/product/:id", async (req, res) => {
+app.put("/product/:id", verifyToken, async (req, res) => {
   let result = await Products.updateOne(
     { _id: req.params.id },
     {
@@ -99,7 +99,7 @@ app.put("/product/:id", async (req, res) => {
   }
   // console.log(result);
 });
-app.get("/search/:key", async (req, res) => {
+app.get("/search/:key", verifyToken, async (req, res) => {
   let result = await Products.find({
     $or: [
       { name: { $regex: req.params.key } },
@@ -113,4 +113,24 @@ app.get("/search/:key", async (req, res) => {
     res.send({ result: "No record Found" });
   }
 });
+
+function verifyToken(req, res, next) {
+  let token = req.headers.authorization;
+  if (token) {
+    token = token.split(" ")[1];
+    Jwt.verify(token, jwtKey, (err, valid) => {
+      if (err) {
+        res.status(401).send({ result: "Please provide valid token  " });
+      } else {
+        // res.send(valid);
+        next();
+      }
+    });
+    // console.log(token);
+  } else {
+    res.status(403).send({ result: "Please add token with headers" });
+  }
+  // console.log("middleware call", token);
+  // next();
+}
 app.listen(5000);
