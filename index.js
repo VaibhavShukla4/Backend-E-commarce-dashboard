@@ -97,7 +97,6 @@ app.put("/product/:id", verifyToken, async (req, res) => {
   } else {
     res.send({ result: "No record Found" });
   }
-  // console.log(result);
 });
 app.get("/search/:key", verifyToken, async (req, res) => {
   let result = await Products.find({
